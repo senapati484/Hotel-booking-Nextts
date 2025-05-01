@@ -122,7 +122,7 @@ export function HotelForm({ hotel, onSave, onCancel }: HotelFormProps) {
     setFormData({ ...formData, amenities: updatedAmenities })
   }
 
-  const handleRoomChange = (index: number, field: keyof Room, value: any) => {
+  const handleRoomChange = (index: number, field: keyof Room, value: Room[keyof Room]) => {
     const updatedRooms = [...(formData.rooms || [])]
     updatedRooms[index] = { ...updatedRooms[index], [field]: value }
     setFormData({ ...formData, rooms: updatedRooms })

@@ -1,20 +1,30 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getHotelById } from "@/lib/firebase/hotels";
-import { HotelGallery } from "@/components/hotel-gallery";
 import { HotelAmenities } from "@/components/hotel-amenities";
 import { HotelReviews } from "@/components/hotel-reviews";
 import { BookingForm } from "@/components/booking-form";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, MapPin, Share, Heart } from "lucide-react";
+import {
+  Star,
+  MapPin,
+  Share,
+  Heart,
+  Users,
+  Square,
+  Bed,
+  Mountain,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
-export default async function HotelDetailsPage({
-  params,
-}: {
+interface PageProps {
   params: { id: string };
-}) {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export default async function HotelDetailsPage({ params }: PageProps) {
   const hotel = await getHotelById(params.id);
 
   if (!hotel) {
@@ -22,55 +32,93 @@ export default async function HotelDetailsPage({
   }
 
   return (
-    <div className="w-full flex justify-center px-4 md:px-6 py-8">
-      <div className="flex flex-col gap-6 w-full max-w-screen-lg">
-        {/* Hotel Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold">{hotel.name}</h1>
-            <div className="flex items-center mt-2 text-muted-foreground">
-              <MapPin className="h-4 w-4 mr-1" />
-              <span>{hotel.location}</span>
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <div className="relative h-[60vh] w-full overflow-hidden">
+        <Image
+          src={hotel.images[0] || "/placeholder.svg"}
+          alt={hotel.name}
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <div className="mx-auto max-w-6xl">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              {hotel.name}
+            </h1>
+            <div className="flex flex-wrap items-center gap-4 text-white">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                <span>{hotel.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-400" fill="currentColor" />
+                <span className="font-medium">{hotel.rating}</span>
+                <span className="text-white/80">
+                  ({hotel.reviewCount} reviews)
+                </span>
+              </div>
+              <div className="flex gap-2 ml-auto">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30"
+                >
+                  <Heart className="h-5 w-5" />
+                  <span className="sr-only">Save to favorites</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30"
+                >
+                  <Share className="h-5 w-5" />
+                  <span className="sr-only">Share</span>
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center bg-primary/10 px-3 py-1 rounded-md">
-              <Star className="h-4 w-4 text-primary mr-1" fill="currentColor" />
-              <span className="font-medium">{hotel.rating}</span>
-              <span className="text-muted-foreground ml-1">
-                ({hotel.reviewCount} reviews)
-              </span>
-            </div>
-            <Button variant="outline" size="icon">
-              <Heart className="h-5 w-5" />
-              <span className="sr-only">Save to favorites</span>
-            </Button>
-            <Button variant="outline" size="icon">
-              <Share className="h-5 w-5" />
-              <span className="sr-only">Share</span>
-            </Button>
           </div>
         </div>
+      </div>
 
-        {/* Hotel Gallery */}
-        <HotelGallery images={hotel.images} />
+      {/* Content */}
+      <div className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
+          <div className="space-y-8">
+            {/* Gallery Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {hotel.images.slice(1, 5).map((image, index) => (
+                <div
+                  key={index}
+                  className="relative aspect-[4/3] rounded-lg overflow-hidden"
+                >
+                  <Image
+                    src={image || "/placeholder.svg"}
+                    alt={`${hotel.name} view ${index + 2}`}
+                    fill
+                    className="object-cover hover:scale-105 transition-transform"
+                  />
+                </div>
+              ))}
+            </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            {/* Description */}
+            {/* About */}
             <div>
               <h2 className="text-2xl font-bold mb-4">About this hotel</h2>
-              <p className="text-muted-foreground whitespace-pre-line">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
                 {hotel.description}
-              </p>
+              </div>
             </div>
 
             <Separator />
 
             {/* Amenities */}
             <div>
-              <h2 className="text-2xl font-bold mb-4">Amenities</h2>
+              <h2 className="text-2xl font-bold mb-6">
+                What this place offers
+              </h2>
               <HotelAmenities amenities={hotel.amenities} />
             </div>
 
@@ -78,50 +126,53 @@ export default async function HotelDetailsPage({
 
             {/* Rooms */}
             <div>
-              <h2 className="text-2xl font-bold mb-4">Available Rooms</h2>
-              <div className="grid gap-4">
+              <h2 className="text-2xl font-bold mb-6">Available Rooms</h2>
+              <div className="grid gap-6">
                 {hotel.rooms.map((room) => (
-                  <div key={room.id} className="border rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr_auto] gap-4">
-                      <div className="relative h-[150px] rounded-md overflow-hidden">
+                  <div
+                    key={room.id}
+                    className="group border rounded-xl p-6 hover:border-primary transition-colors"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr_auto] gap-6">
+                      <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
                         <Image
                           src={room.image || "/placeholder.svg"}
                           alt={room.name}
                           fill
-                          className="object-cover"
+                          className="object-cover group-hover:scale-105 transition-transform"
                         />
                       </div>
                       <div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between mb-2">
                           <h3 className="text-xl font-bold">{room.name}</h3>
                           {room.discount && (
                             <Badge
-                              variant="outline"
-                              className="text-green-600 border-green-600"
+                              variant="secondary"
+                              className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                             >
                               {room.discount}% OFF
                             </Badge>
                           )}
                         </div>
-                        <ul className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                          <li className="flex items-center">
-                            <span className="mr-2">•</span>
-                            Up to {room.capacity} guests
-                          </li>
-                          <li className="flex items-center">
-                            <span className="mr-2">•</span>
-                            {room.size} sqft
-                          </li>
-                          <li className="flex items-center">
-                            <span className="mr-2">•</span>
-                            {room.bedType}
-                          </li>
-                          <li className="flex items-center">
-                            <span className="mr-2">•</span>
-                            {room.view} view
-                          </li>
-                        </ul>
-                        <p className="mt-2 text-sm text-muted-foreground">
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm mb-4">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span>Up to {room.capacity} guests</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Square className="h-4 w-4 text-muted-foreground" />
+                            <span>{room.size} sqft</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Bed className="h-4 w-4 text-muted-foreground" />
+                            <span>{room.bedType}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Mountain className="h-4 w-4 text-muted-foreground" />
+                            <span>{room.view} view</span>
+                          </div>
+                        </div>
+                        <p className="text-muted-foreground text-sm">
                           {room.description}
                         </p>
                       </div>
@@ -139,7 +190,7 @@ export default async function HotelDetailsPage({
                             </div>
                           )}
                         </div>
-                        <Button>Select</Button>
+                        <Button>Select Room</Button>
                       </div>
                     </div>
                   </div>
@@ -151,16 +202,18 @@ export default async function HotelDetailsPage({
 
             {/* Reviews */}
             <div>
-              <h2 className="text-2xl font-bold mb-4">Guest Reviews</h2>
+              <h2 className="text-2xl font-bold mb-6">Guest Reviews</h2>
               <HotelReviews hotelId={hotel.id} />
             </div>
           </div>
 
-          {/* Booking Form */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <BookingForm hotel={hotel} />
-            </div>
+          {/* Sidebar */}
+          <div className="lg:sticky lg:top-24 lg:h-fit">
+            <Card className="border-2">
+              <CardContent className="p-6">
+                <BookingForm hotel={hotel} />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

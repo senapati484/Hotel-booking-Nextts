@@ -8,27 +8,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Users, Search } from "lucide-react";
+import { MapPin, Users, Search, Calendar } from "lucide-react";
 
 export function SearchHeader() {
   return (
-    <div className="w-full flex justify-center bg-muted py-4 border-b">
-      <div className="container px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Where are you going?" className="flex-1" />
+    <div className="sticky top-0 z-50 w-full backdrop-blur-lg border-b bg-background/80">
+      <div className="container px-4 py-4 mx-auto">
+        <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+          <div className="w-full md:w-[300px]">
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Where are you going?"
+                className="pl-10 h-12 bg-background"
+              />
             </div>
           </div>
-          <div className="space-y-2 md:col-span-2">
-            <DatePickerWithRange className="w-full" />
+
+          <div className="flex-1 relative">
+            <DatePickerWithRange
+              align="start"
+              className="[&_.date-range-trigger]:w-full [&_.date-range-trigger]:justify-start [&_.date-range-trigger]:h-12 [&_.date-range-trigger]:pl-10 relative"
+            />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
+
+          <div className="w-full md:w-[200px]">
+            <div className="relative">
+              <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Select>
-                <SelectTrigger>
+                <SelectTrigger className="w-full h-12 pl-10">
                   <SelectValue placeholder="Guests" />
                 </SelectTrigger>
                 <SelectContent>
@@ -41,11 +50,10 @@ export function SearchHeader() {
               </Select>
             </div>
           </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button>
+
+          <Button className="h-12 px-8" size="lg">
             <Search className="h-4 w-4 mr-2" />
-            Search Hotels
+            Search
           </Button>
         </div>
       </div>

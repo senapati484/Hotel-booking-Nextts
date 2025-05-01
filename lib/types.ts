@@ -12,6 +12,8 @@ export interface Hotel {
   amenities: string[]
   rooms: Room[]
   featured: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Room {

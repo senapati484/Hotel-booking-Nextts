@@ -1,4 +1,4 @@
-import type React from "react"
+import type React from "react";
 import {
   Wifi,
   Coffee,
@@ -16,13 +16,15 @@ import {
   ShipWheelIcon as Wheelchair,
   ShieldCheck,
   Leaf,
-} from "lucide-react"
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HotelAmenitiesProps {
-  amenities: string[]
+  amenities: string[];
+  className?: string;
 }
 
-export function HotelAmenities({ amenities }: HotelAmenitiesProps) {
+export function HotelAmenities({ amenities, className }: HotelAmenitiesProps) {
   const amenityIcons: Record<string, React.ReactNode> = {
     wifi: <Wifi className="h-5 w-5" />,
     breakfast: <Coffee className="h-5 w-5" />,
@@ -40,7 +42,7 @@ export function HotelAmenities({ amenities }: HotelAmenitiesProps) {
     "wheelchair-accessible": <Wheelchair className="h-5 w-5" />,
     security: <ShieldCheck className="h-5 w-5" />,
     "eco-friendly": <Leaf className="h-5 w-5" />,
-  }
+  };
 
   const amenityLabels: Record<string, string> = {
     wifi: "Free WiFi",
@@ -59,18 +61,28 @@ export function HotelAmenities({ amenities }: HotelAmenitiesProps) {
     "wheelchair-accessible": "Wheelchair Accessible",
     security: "24/7 Security",
     "eco-friendly": "Eco-Friendly",
-  }
+  };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div
+      className={cn(
+        "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6",
+        className
+      )}
+    >
       {amenities.map((amenity) => (
-        <div key={amenity} className="flex items-center gap-2">
-          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+        <div
+          key={amenity}
+          className="flex items-center gap-4 p-4 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors"
+        >
+          <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
             {amenityIcons[amenity] || <div className="h-5 w-5" />}
           </div>
-          <span>{amenityLabels[amenity] || amenity}</span>
+          <span className="font-medium">
+            {amenityLabels[amenity] || amenity}
+          </span>
         </div>
       ))}
     </div>
-  )
+  );
 }

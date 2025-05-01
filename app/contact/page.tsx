@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable react/no-unescaped-entities */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,54 @@ import {
 } from "@/components/ui/select";
 import { Mail, Phone, MapPin } from "lucide-react";
 
+import { useState } from "react";
+
 export default function ContactPage() {
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to send message.");
+      }
+      setSuccess(true);
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } catch (err: unknown) {
+      let message = "Something went wrong.";
+      if (err instanceof Error) message = err.message;
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container px-4 md:px-6 py-12 mx-auto max-w-5xl">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -97,19 +145,19 @@ export default function ContactPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="first-name" className="text-sm font-medium">
                       First Name
                     </label>
-                    <Input id="first-name" placeholder="John" />
+                    <Input id="first-name" placeholder="John" value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} required />
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="last-name" className="text-sm font-medium">
                       Last Name
                     </label>
-                    <Input id="last-name" placeholder="Doe" />
+                    <Input id="last-name" placeholder="Doe" value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} required />
                   </div>
                 </div>
 
@@ -121,6 +169,9 @@ export default function ContactPage() {
                     id="email"
                     type="email"
                     placeholder="john.doe@example.com"
+                    value={form.email}
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    required
                   />
                 </div>
 
@@ -128,14 +179,14 @@ export default function ContactPage() {
                   <label htmlFor="phone" className="text-sm font-medium">
                     Phone Number (Optional)
                   </label>
-                  <Input id="phone" placeholder="+1 (555) 123-4567" />
+                  <Input id="phone" placeholder="+1 (555) 123-4567" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
                 </div>
 
                 <div className="space-y-2">
                   <label htmlFor="subject" className="text-sm font-medium">
                     Subject
                   </label>
-                  <Select>
+                  <Select value={form.subject} onValueChange={value => setForm({ ...form, subject: value })} required>
                     <SelectTrigger id="subject">
                       <SelectValue placeholder="Select a subject" />
                     </SelectTrigger>
@@ -143,9 +194,7 @@ export default function ContactPage() {
                       <SelectItem value="booking">Booking Inquiry</SelectItem>
                       <SelectItem value="support">Customer Support</SelectItem>
                       <SelectItem value="feedback">Feedback</SelectItem>
-                      <SelectItem value="partnership">
-                        Partnership Opportunity
-                      </SelectItem>
+                      <SelectItem value="partnership">Partnership Opportunity</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
@@ -159,12 +208,21 @@ export default function ContactPage() {
                     id="message"
                     placeholder="Please provide details about your inquiry..."
                     rows={5}
+                    value={form.message}
+                    onChange={e => setForm({ ...form, message: e.target.value })}
+                    required
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Send Message
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Sending..." : "Send Message"}
                 </Button>
+                {success && (
+                  <div className="text-green-600 text-sm text-center mt-2">Thank you! Your message has been sent.</div>
+                )}
+                {error && (
+                  <div className="text-red-600 text-sm text-center mt-2">{error}</div>
+                )}
               </form>
             </CardContent>
           </Card>

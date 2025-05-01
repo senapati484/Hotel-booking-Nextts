@@ -22,10 +22,19 @@ const hotelsCollection = collection(db, "hotels")
 export async function getAllHotels(): Promise<Hotel[]> {
   try {
     const snapshot = await getDocs(query(hotelsCollection, orderBy("name")))
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Hotel[]
+    return snapshot.docs.map((doc) => {
+      const data = doc.data()
+      // Convert Timestamps to ISO strings
+      const createdAt = data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      const updatedAt = data.updatedAt?.toDate?.()?.toISOString() || createdAt
+
+      return {
+        id: doc.id,
+        ...data,
+        createdAt,
+        updatedAt,
+      } as Hotel
+    })
   } catch (error) {
     console.error("Error getting hotels:", error)
     return []
@@ -38,10 +47,19 @@ export async function getFeaturedHotels(): Promise<Hotel[]> {
     const snapshot = await getDocs(
       query(hotelsCollection, where("featured", "==", true), orderBy("rating", "desc"), limit(3)),
     )
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Hotel[]
+    return snapshot.docs.map((doc) => {
+      const data = doc.data()
+      // Convert Timestamps to ISO strings
+      const createdAt = data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      const updatedAt = data.updatedAt?.toDate?.()?.toISOString() || createdAt
+
+      return {
+        id: doc.id,
+        ...data,
+        createdAt,
+        updatedAt,
+      } as Hotel
+    })
   } catch (error) {
     console.error("Error getting featured hotels:", error)
     return []
@@ -55,9 +73,16 @@ export async function getHotelById(id: string): Promise<Hotel | null> {
     const docSnap = await getDoc(docRef)
 
     if (docSnap.exists()) {
+      const data = docSnap.data()
+      // Convert Timestamps to ISO strings
+      const createdAt = data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      const updatedAt = data.updatedAt?.toDate?.()?.toISOString() || createdAt
+
       return {
         id: docSnap.id,
-        ...docSnap.data(),
+        ...data,
+        createdAt,
+        updatedAt,
       } as Hotel
     } else {
       return null

@@ -48,10 +48,12 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         description: "Welcome back to Luxurious Beauty!",
       })
       onOpenChange(false)
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let message = "There was a problem logging in. Please check your credentials.";
+      if (error instanceof Error) message = error.message;
       toast({
         title: "Login failed",
-        description: error.message || "There was a problem logging in. Please check your credentials.",
+        description: message,
         variant: "destructive",
       })
     } finally {
@@ -80,10 +82,12 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         description: "Your account has been created successfully!",
       })
       onOpenChange(false)
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let message = "There was a problem creating your account.";
+      if (error instanceof Error) message = error.message;
       toast({
         title: "Registration failed",
-        description: error.message || "There was a problem creating your account.",
+        description: message,
         variant: "destructive",
       })
     } finally {
@@ -101,10 +105,12 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         description: "Welcome to Luxurious Beauty!",
       })
       onOpenChange(false)
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let message = "There was a problem logging in with Google.";
+      if (error instanceof Error) message = error.message;
       toast({
         title: "Google login failed",
-        description: error.message || "There was a problem logging in with Google.",
+        description: message,
         variant: "destructive",
       })
     } finally {
