@@ -12,6 +12,8 @@ export interface Hotel {
   amenities: string[]
   rooms: Room[]
   featured: boolean
+  maxGuests: number
+  type: string
   createdAt: string
   updatedAt: string
 }

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { addDays, format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,16 +15,27 @@ import {
 interface DatePickerWithRangeProps {
   className?: string;
   align?: "start" | "center" | "end";
+  value?: DateRange;
+  onChange?: (date: DateRange | undefined) => void;
 }
 
 export function DatePickerWithRange({
   className,
   align = "center",
+  value,
+  onChange,
 }: DatePickerWithRangeProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 3),
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>(
+    value || {
+      from: new Date(),
+      to: addDays(new Date(), 3),
+    }
+  );
+
+  const handleSelect = (newDate: DateRange | undefined) => {
+    setDate(newDate);
+    onChange?.(newDate);
+  };
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -60,7 +70,7 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={handleSelect}
             numberOfMonths={2}
             className="rounded-md border shadow-lg [&_.rdp-day]:h-9 [&_.rdp-day]:w-9 [&_.rdp-day]:text-sm [&_.rdp-day]:rounded-md [&_.rdp-day_+_span]:hidden [&_.rdp-day.rdp-day_selected]:bg-primary [&_.rdp-day.rdp-day_selected]:text-primary-foreground [&_.rdp-day.rdp-day_selected]:hover:bg-primary/90 [&_.rdp-day.rdp-day_selected:focus]:bg-primary/90"
           />

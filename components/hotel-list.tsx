@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, MapPin, Users, Wifi } from "lucide-react";
+import { Star, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Hotel } from "@/lib/types";
 

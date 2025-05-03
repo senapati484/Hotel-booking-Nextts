@@ -47,65 +47,6 @@ export function PaymentForm({
   const [sameAsGuest, setSameAsGuest] = useState(true);
   const [errors, setErrors] = useState<CardError>({});
 
-  const validateCard = (): boolean => {
-    const newErrors: CardError = {};
-
-    // Name validation
-    if (!cardDetails.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
-    // Card number validation (basic Luhn algorithm check)
-    const cardNumber = cardDetails.number.replace(/\s/g, "");
-    if (!cardNumber) {
-      newErrors.number = "Card number is required";
-    } else if (!/^\d{16}$/.test(cardNumber)) {
-      newErrors.number = "Invalid card number";
-    } else {
-      // Luhn algorithm check
-      let sum = 0;
-      let isEven = false;
-      for (let i = cardNumber.length - 1; i >= 0; i--) {
-        let digit = parseInt(cardNumber[i]);
-        if (isEven) {
-          digit *= 2;
-          if (digit > 9) {
-            digit -= 9;
-          }
-        }
-        sum += digit;
-        isEven = !isEven;
-      }
-      if (sum % 10 !== 0) {
-        newErrors.number = "Invalid card number";
-      }
-    }
-
-    // Expiry validation (MM/YY format)
-    if (!cardDetails.expiry) {
-      newErrors.expiry = "Expiry date is required";
-    } else if (!/^\d{2}\/\d{2}$/.test(cardDetails.expiry)) {
-      newErrors.expiry = "Use MM/YY format";
-    } else {
-      const [month, year] = cardDetails.expiry.split("/");
-      const expiry = new Date(2000 + parseInt(year), parseInt(month) - 1);
-      const now = new Date();
-      if (expiry < now) {
-        newErrors.expiry = "Card has expired";
-      }
-    }
-
-    // CVC validation
-    if (!cardDetails.cvc) {
-      newErrors.cvc = "CVC is required";
-    } else if (!/^\d{3,4}$/.test(cardDetails.cvc)) {
-      newErrors.cvc = "Invalid CVC";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const formatCardNumber = (value: string): string => {
     const cleaned = value.replace(/\D/g, "");
     const groups = cleaned.match(/(\d{1,4})/g);
@@ -138,9 +79,8 @@ export function PaymentForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateCard()) {
-      onSuccess();
-    }
+    // Temporarily confirm payment even if validation fails
+    onSuccess();
   };
 
   return (

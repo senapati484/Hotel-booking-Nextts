@@ -19,17 +19,20 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface PageProps {
-  params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+interface Props {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function HotelDetailsPage({ params }: PageProps) {
-  const hotel = await getHotelById(params.id);
+export default async function HotelDetailsPage(props: Props) {
+  // Await the incoming params promise
+  const { id } = await props.params;
 
-  if (!hotel) {
-    notFound();
-  }
+  // (Optional) If you need query filters:
+  // const query = props.searchParams ? await props.searchParams : {};
+
+  const hotel = await getHotelById(id);
+  if (!hotel) notFound();
 
   return (
     <div className="min-h-screen bg-background">
@@ -89,14 +92,14 @@ export default async function HotelDetailsPage({ params }: PageProps) {
           <div className="space-y-8">
             {/* Gallery Grid */}
             <div className="grid grid-cols-2 gap-4">
-              {hotel.images.slice(1, 5).map((image, index) => (
+              {hotel.images.slice(1, 5).map((image, idx) => (
                 <div
-                  key={index}
+                  key={idx}
                   className="relative aspect-[4/3] rounded-lg overflow-hidden"
                 >
                   <Image
                     src={image || "/placeholder.svg"}
-                    alt={`${hotel.name} view ${index + 2}`}
+                    alt={`${hotel.name} view ${idx + 2}`}
                     fill
                     className="object-cover hover:scale-105 transition-transform"
                   />
@@ -146,30 +149,24 @@ export default async function HotelDetailsPage({ params }: PageProps) {
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="text-xl font-bold">{room.name}</h3>
                           {room.discount && (
-                            <Badge
-                              variant="secondary"
-                              className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            >
+                            <Badge variant="secondary">
                               {room.discount}% OFF
                             </Badge>
                           )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm mb-4">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-muted-foreground" />
-                            <span>Up to {room.capacity} guests</span>
+                            <Users className="h-4 w-4" /> Up to {room.capacity}{" "}
+                            guests
                           </div>
                           <div className="flex items-center gap-2">
-                            <Square className="h-4 w-4 text-muted-foreground" />
-                            <span>{room.size} sqft</span>
+                            <Square className="h-4 w-4" /> {room.size} sqft
                           </div>
                           <div className="flex items-center gap-2">
-                            <Bed className="h-4 w-4 text-muted-foreground" />
-                            <span>{room.bedType}</span>
+                            <Bed className="h-4 w-4" /> {room.bedType}
                           </div>
                           <div className="flex items-center gap-2">
-                            <Mountain className="h-4 w-4 text-muted-foreground" />
-                            <span>{room.view} view</span>
+                            <Mountain className="h-4 w-4" /> {room.view} view
                           </div>
                         </div>
                         <p className="text-muted-foreground text-sm">
@@ -185,7 +182,7 @@ export default async function HotelDetailsPage({ params }: PageProps) {
                             per night
                           </div>
                           {room.originalPrice && (
-                            <div className="text-sm text-muted-foreground line-through">
+                            <div className="text-sm line-through">
                               ${room.originalPrice}
                             </div>
                           )}
@@ -203,7 +200,7 @@ export default async function HotelDetailsPage({ params }: PageProps) {
             {/* Reviews */}
             <div>
               <h2 className="text-2xl font-bold mb-6">Guest Reviews</h2>
-              <HotelReviews hotelId={hotel.id} />
+              <HotelReviews hotelId={id} />
             </div>
           </div>
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -41,11 +40,36 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface UserProfile {
+  name: string;
+  email: string;
+  avatar: string;
+  memberSince: string;
+  savedHotels: string[];
+  provider: string;
+  id: string;
+}
+
+interface Booking {
+  id: string;
+  hotelId: string;
+  hotelName: string;
+  roomId: string;
+  roomName: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  guests: number;
+  price: number;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+  createdAt: string;
+}
+
 export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [user, setUser] = useState<any | null>(null);
-  const [bookings, setBookings] = useState<any[]>([]);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -129,10 +153,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container px-4 md:px-6 py-12 mx-auto max-w-6xl">
-      <div className="flex flex-col md:flex-row gap-8">
+    <div className="container px-4 md:px-6 py-12 mx-auto min-h-screen max-w-6xl">
+      <div className="flex flex-col md:flex-row gap-8 h-full">
+        {/* profile leftbar */}
         <div className="md:w-1/3">
-          <Card>
+          <Card className="sticky top-22">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
                 <div className="flex flex-col">
@@ -217,42 +242,71 @@ export default function ProfilePage() {
                         <div key={booking.id} className="border rounded-lg p-4">
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <h3 className="font-bold">{booking.hotel}</h3>
-                              <div className="flex items-center text-muted-foreground text-sm">
+                              <h3 className="font-bold">{booking.hotelName}</h3>
+                              <p className="text-sm">{booking.roomName}</p>
+                              <div className="flex items-center text-muted-foreground text-sm mt-1">
                                 <MapPin className="h-3 w-3 mr-1" />
-                                {booking.location}
+                                {booking.hotelName}
                               </div>
                             </div>
                             <Badge
                               variant={
-                                booking.status === "Upcoming"
+                                booking.status === "confirmed"
                                   ? "default"
-                                  : "outline"
+                                  : booking.status === "cancelled"
+                                  ? "destructive"
+                                  : "secondary"
                               }
                             >
-                              {booking.status}
+                              {booking.status.charAt(0).toUpperCase() +
+                                booking.status.slice(1)}
                             </Badge>
                           </div>
-                          <div className="flex justify-between items-center mt-4">
-                            <div className="text-sm text-muted-foreground">
-                              <Calendar className="h-3 w-3 inline mr-1" />
-                              {booking.dates}
+                          <div className="mt-4 text-sm space-y-2">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center text-muted-foreground">
+                                <User className="h-3 w-3 mr-1" />
+                                {booking.guests}{" "}
+                                {booking.guests === 1 ? "Guest" : "Guests"}
+                              </div>
+                              <div className="font-medium">
+                                ${booking.price.toLocaleString()}
+                              </div>
                             </div>
-                            <div className="font-medium">
-                              ${booking.price.toLocaleString()}
+                            <div className="flex justify-between items-center">
+                              <div className="text-muted-foreground">
+                                <Calendar className="h-3 w-3 inline mr-1" />
+                                {new Date(booking.createdAt).toLocaleDateString(
+                                  undefined,
+                                  {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                  }
+                                )}
+                              </div>
+                              <div className="text-muted-foreground">
+                                {booking.userEmail}
+                              </div>
                             </div>
                           </div>
                           <div className="mt-4 flex gap-2">
-                            <Button variant="outline" size="sm">
-                              View Details
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                router.push(`/hotels/${booking.hotelId}`)
+                              }
+                            >
+                              View Hotel
                             </Button>
-                            {booking.status === "Upcoming" && (
+                            {booking.status === "confirmed" && (
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-destructive"
+                                className="text-destructive hover:text-destructive"
                               >
-                                Cancel
+                                Cancel Booking
                               </Button>
                             )}
                           </div>
@@ -264,7 +318,12 @@ export default function ProfilePage() {
                       <p className="text-muted-foreground">
                         You don't have any bookings yet.
                       </p>
-                      <Button className="mt-4">Find Hotels</Button>
+                      <Button
+                        className="mt-4"
+                        onClick={() => router.push("/hotels")}
+                      >
+                        Find Hotels
+                      </Button>
                     </div>
                   )}
                 </CardContent>
