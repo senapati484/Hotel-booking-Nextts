@@ -161,14 +161,16 @@ export function HotelFilters() {
             <div className="text-sm text-muted-foreground">per night</div>
           </div>
           <Slider
+            defaultValue={filters.priceRange}
             value={filters.priceRange}
             min={0}
-            max={1000}
-            step={10}
+            max={10000}
+            step={100}
+            minStepsBetweenThumbs={1}
             onValueChange={(value) =>
               setFilters((prev) => ({ ...prev, priceRange: value as number[] }))
             }
-            className="[&_.slider-thumb]:h-4 [&_.slider-thumb]:w-4 [&_.slider-thumb]:border-4"
+            className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2 [&_[role=slider]]:border-primary"
           />
           <div className="flex items-center justify-between">
             <div className="rounded-md border px-3 py-1.5 text-sm">
