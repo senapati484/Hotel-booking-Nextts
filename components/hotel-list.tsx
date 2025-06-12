@@ -65,7 +65,7 @@ export function HotelList({ hotels }: HotelListProps) {
                     </div>
                     {hotel.originalPrice && (
                       <div className="text-sm text-muted-foreground line-through">
-                        ${hotel.originalPrice}
+                        ₹{hotel.originalPrice}
                       </div>
                     )}
                   </div>

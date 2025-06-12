@@ -106,14 +106,14 @@ export function BookingForm({ hotel }: BookingFormProps) {
       <div className="flex items-center justify-between">
         <div>
           <div className="text-2xl font-bold">
-            ${selectedRoomData?.price || hotel.price}
+            ₹{selectedRoomData?.price || hotel.price}
             <span className="text-sm font-normal text-muted-foreground ml-1">
               /night
             </span>
           </div>
           {selectedRoomData?.originalPrice && (
             <div className="text-sm text-muted-foreground line-through">
-              ${selectedRoomData.originalPrice}/night
+              ₹{selectedRoomData.originalPrice}/night
             </div>
           )}
         </div>
@@ -169,18 +169,18 @@ export function BookingForm({ hotel }: BookingFormProps) {
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
           <span>
-            ${selectedRoomData?.price || hotel.price} × {nights} nights
+            ₹{selectedRoomData?.price || hotel.price} × {nights} nights
           </span>
-          <span>${subtotal}</span>
+          <span>₹{subtotal}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span>Taxes & fees</span>
-          <span>${taxes.toFixed(2)}</span>
+          <span>₹{taxes.toFixed(2)}</span>
         </div>
         <Separator />
         <div className="flex justify-between font-bold">
           <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+          <span>₹{total.toFixed(2)}</span>
         </div>
       </div>
 

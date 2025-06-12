@@ -172,11 +172,11 @@ export function HotelFilters() {
           />
           <div className="flex items-center justify-between">
             <div className="rounded-md border px-3 py-1.5 text-sm">
-              ${filters.priceRange[0]}
+              ₹{filters.priceRange[0]}
             </div>
             <div className="text-muted-foreground">—</div>
             <div className="rounded-md border px-3 py-1.5 text-sm">
-              ${filters.priceRange[1]}
+              ₹{filters.priceRange[1]}
             </div>
           </div>
         </div>

@@ -183,7 +183,7 @@ export default async function HotelDetailsPage(props: Props) {
                           </div>
                           {room.originalPrice && (
                             <div className="text-sm line-through">
-                              ${room.originalPrice}
+                              ₹{room.originalPrice}
                             </div>
                           )}
                         </div>
