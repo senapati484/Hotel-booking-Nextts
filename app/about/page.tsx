@@ -5,11 +5,11 @@ export default function AboutPage() {
   return (
     <div className="container px-4 md:px-6 py-12 mx-auto max-w-3xl">
       <h1 className="text-4xl font-bold tracking-tighter mb-8 text-center">
-        About StayEase
+        About Luxurious Beauty
       </h1>
       <p className="text-muted-foreground mb-8">
-        StayEase is a premier hotel booking platform dedicated to providing
-        travelers with exceptional accommodation options worldwide.
+        Luxurious Beauty is a premier hotel booking platform dedicated to
+        providing travelers with exceptional accommodation options worldwide.
       </p>
 
       <div className="relative h-[300px] w-full mb-8 rounded-lg overflow-hidden">
@@ -23,8 +23,8 @@ export default function AboutPage() {
 
       <h2 className="text-2xl font-bold mb-4">Our Story</h2>
       <p className="mb-6">
-        Founded in 2020, StayEase was born from a passion for travel and a
-        desire to simplify the hotel booking process. Our founders, avid
+        Founded in 2020, Luxurious Beauty was born from a passion for travel and
+        a desire to simplify the hotel booking process. Our founders, avid
         travelers themselves, recognized the need for a platform that not only
         offered a wide selection of accommodations but also provided a seamless
         booking experience.
@@ -32,10 +32,11 @@ export default function AboutPage() {
 
       <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
       <p className="mb-6">
-        At StayEase, our mission is to connect travelers with their ideal
-        accommodations, making the booking process as effortless as possible. We
-        strive to offer a diverse range of hotels, from luxury resorts to cozy
-        boutique stays, ensuring that every traveler finds their perfect match.
+        At Luxurious Beauty, our mission is to connect travelers with their
+        ideal accommodations, making the booking process as effortless as
+        possible. We strive to offer a diverse range of hotels, from luxury
+        resorts to cozy boutique stays, ensuring that every traveler finds their
+        perfect match.
       </p>
 
       <h2 className="text-2xl font-bold mb-4">What Sets Us Apart</h2>
